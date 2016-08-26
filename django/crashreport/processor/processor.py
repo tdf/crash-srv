@@ -51,7 +51,7 @@ class MinidumpProcessor(object):
             elif line.startswith('Crash'):
                 crash.append(line)
             elif line.startswith('Module'):
-                modules.append(line)
+                modules.append(line.decode('utf-8'))
             elif line is '':
                 continue
             else:
