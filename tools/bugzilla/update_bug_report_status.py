@@ -15,18 +15,19 @@ import datetime
 URL = "bugs.documentfoundation.org"
 
 def update_bug_stats(session, bug_id, fixed):
-    url = "http://crashreport.libreoffice.org/management/set-bug-status"
+    url = "http://localhost/management/set-bug-status/"
 
     data = {'fixed': fixed, 'bug_nr': bug_id}
     r = session.post(url, data = data)
     if r.status_code != 200:
+        print(r.content)
         print("Error while setting tdf#%d to %s" % (bug_id, fixed))
 
 def is_bug_report_fixed(bug):
     return not bug.is_open
 
 def main():
-    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    yesterday = datetime.date.today() - datetime.timedelta(days=60)
     bzapi = bugzilla.Bugzilla(URL)
     bz_query_url = "https://bugs.documentfoundation.org/buglist.cgi?f1=cf_crashreport&f3=OP&f4=bug_status&f5=creation_ts&f6=cf_crashreport&j3=OR&list_id=620366&o1=isnotempty&o4=changedafter&o5=changedafter&o6=changedafter&query_format=advanced&v4=%s&v5=%s&v6=%s" % (yesterday.isoformat(), yesterday.isoformat(), yesterday.isoformat())
     query = bzapi.url_to_query(bz_query_url)
@@ -39,7 +40,7 @@ def main():
     config = configparser.ConfigParser()
     config.read(sys.argv[1])
 
-    login_url = "http://crashreport.libreoffice.org/accounts/login/"
+    login_url = "http://localhost/accounts/login/"
     user = config["CrashReport"]["User"]
     password = config["CrashReport"]["Password"]
     session = requests.session()

@@ -15,7 +15,7 @@ import datetime
 URL = "bugs.documentfoundation.org"
 
 def set_bug_to_report(session, signature, bug):
-    url = "http://crashreport.libreoffice.org/management/add-bug"
+    url = "http://localhost/management/add-bug"
 
     data = {'signature': signature, 'bug_nr': bug}
     r = session.post(url, data = data)
@@ -24,14 +24,14 @@ def set_bug_to_report(session, signature, bug):
 
 def main():
 
-    login_url = "http://crashreport.libreoffice.org/accounts/login/"
+    login_url = "http://localhost/accounts/login/"
 
     config = configparser.ConfigParser()
     config.read(sys.argv[1])
 
     bzapi = bugzilla.Bugzilla(URL)
 
-    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    yesterday = datetime.date.today() - datetime.timedelta(days=60)
     bz_query_url = "https://bugs.documentfoundation.org/buglist.cgi?f1=cf_crashreport&f3=OP&f4=cf_crashreport&f5=creation_ts&j3=OR&list_id=620362&o1=isnotempty&o4=changedafter&o5=changedafter&product=LibreOffice&query_format=advanced&v4=%s&v5=%s" % (yesterday.isoformat(), yesterday.isoformat())
     query = bzapi.url_to_query(bz_query_url)
 
@@ -43,7 +43,10 @@ def main():
     user = config["CrashReport"]["User"]
     password = config["CrashReport"]["Password"]
     session = requests.session()
-    session.get(login_url)
+    t = session.get(login_url)
+    print(t.content)
+    print(session)
+    print(session.cookies.values())
     csrftoken = session.cookies['csrftoken']
 
     login_data = { 'username': user,'password': password,
