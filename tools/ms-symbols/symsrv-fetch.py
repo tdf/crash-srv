@@ -63,7 +63,7 @@ def fetch_symbol(debug_id, debug_file):
     url = urlparse.urljoin(MICROSOFT_SYMBOL_SERVER,
                            os.path.join(debug_file,
                                         debug_id,
-                                        debug_file[:-1] + '_'))
+                                        debug_file))
     try:
         r = requests.get(url,
                          headers={'User-Agent': USER_AGENT})
