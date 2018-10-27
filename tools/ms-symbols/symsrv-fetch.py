@@ -81,19 +81,27 @@ def fetch_symbol_and_decompress(tmpdir, debug_id, debug_file):
     Returns the filename if successful, or None if unsuccessful.
     '''
     data = fetch_symbol(debug_id, debug_file)
-    if not data or not data.startswith(b'MSCF'):
+    if not data:
         return None
-    path = os.path.join(tmpdir, debug_file[:-1] + '_')
+
+    path = os.path.join(tmpdir, debug_file)
     with open(path, 'wb') as f:
         f.write(data)
-    try:
-        # Decompress it
-        subprocess.check_call(['cabextract', '-L', '-d', tmpdir, path],
-                              stdout=open(os.devnull, 'wb'))
-        os.unlink(path)
-        return os.path.join(tmpdir, debug_file.lower())
-    except subprocess.CalledProcessError:
-        return None
+
+    if data.startswith(b'MSCF'):
+        try:
+            # Decompress it
+            print("decompress it")
+            subprocess.check_call(['cabextract', '-L', '-d', tmpdir, path],
+                                  stdout=open(os.devnull, 'wb'))
+            os.unlink(path)
+            print("decompressed it")
+            return os.path.join(tmpdir, debug_file.lower())
+        except subprocess.CalledProcessError:
+            return None
+
+    else:
+        return path
 
 
 def fetch_and_dump_symbols(tmpdir, debug_id, debug_file,
