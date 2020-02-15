@@ -3,7 +3,7 @@ import sys
 import requests
 import configparser
 
-base_address = "http://crashreport.libreoffice.org/"
+base_address = "https://crashreport.libreoffice.org/"
 
 def main():
 

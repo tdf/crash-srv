@@ -12,10 +12,10 @@ import requests
 import sys
 import datetime
 
-URL = "bugs.documentfoundation.org"
+URL = "https://bugs.documentfoundation.org"
 
 def update_bug_stats(session, bug_id, fixed):
-    url = "http://localhost/management/set-bug-status/"
+    url = "https://crashreport.libreoffice.org/management/set-bug-status"
 
     data = {'fixed': fixed, 'bug_nr': bug_id}
     r = session.post(url, data = data)
@@ -40,7 +40,7 @@ def main():
     config = configparser.ConfigParser()
     config.read(sys.argv[1])
 
-    login_url = "http://localhost/accounts/login/"
+    login_url = "https://crashreport.libreoffice.org/accounts/login/"
     user = config["CrashReport"]["User"]
     password = config["CrashReport"]["Password"]
     session = requests.session()

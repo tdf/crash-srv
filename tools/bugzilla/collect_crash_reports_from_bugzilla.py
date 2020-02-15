@@ -12,10 +12,10 @@ import requests
 import sys
 import datetime
 
-URL = "bugs.documentfoundation.org"
+URL = "https://bugs.documentfoundation.org"
 
 def set_bug_to_report(session, signature, bug):
-    url = "http://localhost/management/add-bug"
+    url = "https://crashreport.libreoffice.org/management/add-bug"
 
     data = {'signature': signature, 'bug_nr': bug}
     r = session.post(url, data = data)
@@ -24,7 +24,7 @@ def set_bug_to_report(session, signature, bug):
 
 def main():
 
-    login_url = "http://localhost/accounts/login/"
+    login_url = "https://crashreport.libreoffice.org/accounts/login/"
 
     config = configparser.ConfigParser()
     config.read(sys.argv[1])
