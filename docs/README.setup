@@ -17,7 +17,7 @@ uwsgidecorators-fallback
 
 * Installation
 
-* clone https://github.com/mmohrhard/crash
+* clone https://github.com/tdf/crash-srv.git
 
 * install postgresql and create a user and a database
 
