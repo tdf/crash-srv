@@ -11,6 +11,10 @@ from uwsgidecoratorsfallback import spool
 
 from subprocess import CalledProcessError
 
+from django.core.exceptions import ObjectDoesNotExist
+
+from django.db import IntegrityError
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -21,8 +25,22 @@ def do_process_uploaded_crash(env):
     try:
         minproc.process(env['crash_id'])
     except CalledProcessError as e:
-        logger.warn('error processing: %s with error %s'%(env['crash_id'], str(e)))
-        return 0
+        logger.warn('error processing: %s with error %s - moving task to breaking spools'%(env['crash_id'], str(e)))
+        do_process_uploaded_crash.spool({'crash_id':env['crash_id'], 'spooler': '/srv/crashreport/crash/breaking_spools'})
+        return -2
+    except IntegrityError as e:
+        logger.critical('error processing: %s with integrityerror %s - moving task to breaking spools'%(env['crash_id'], str(e)))
+        do_process_uploaded_crash.spool({'crash_id':env['crash_id'], 'spooler': '/srv/crashreport/crash/breaking_spools'})
+        return -2
+    except ObjectDoesNotExist as e:
+        logger.critical('error processing: %s with DoesNotExist error %s - moving task to breaking spools'%(env['crash_id'], str(e)))
+        do_process_uploaded_crash.spool({'crash_id':env['crash_id'], 'spooler': '/srv/crashreport/crash/breaking_spools'})
+        return -2
+    except ValueError as e:
+        logger.critical('error processing: %s with ValueError %s - moving task to breaking spools'%(env['crash_id'], str(e)))
+        do_process_uploaded_crash.spool({'crash_id':env['crash_id'], 'spooler': '/srv/crashreport/crash/breaking_spools'})
+        return -2
+
     logger.info('processed: %s' % (env['crash_id']))
     return -2
 
