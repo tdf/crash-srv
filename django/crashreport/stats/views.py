@@ -11,7 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect, \
 from processor.models import ProcessedCrash, Signature, CrashCount, BugReport
 from base.models import Version
 from django.contrib.staticfiles import finders
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django.views.generic import ListView
 from django import forms
@@ -19,7 +19,7 @@ from django.db.models import Count
 from django.core.paginator import Paginator
 
 import json, itertools
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import logging
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ def main(request):
 def generate_bug_info(crash):
     comment_text = "This bug was filed from the crash reporting server and is br-%s.\n=========================================" % crash.crash_id
     signature = "[\"%s\"]" % crash.signature.signature
-    return 'comment=%s&cf_crashreport=%s&short_desc=%s' % ( urllib.quote(comment_text, safe=''), urllib.quote(signature, safe=''), urllib.quote("Crash in: %s" % crash.signature.signature, safe='') )
+    return 'comment=%s&cf_crashreport=%s&short_desc=%s' % ( urllib.parse.quote(comment_text, safe=''), urllib.parse.quote(signature, safe=''), urllib.parse.quote("Crash in: %s" % crash.signature.signature, safe='') )
 
 def crash_details(request, crash_id):
     crash = get_object_or_404(ProcessedCrash, crash_id=crash_id)

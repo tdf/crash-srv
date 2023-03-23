@@ -57,7 +57,7 @@ class CrashCountManager(models.Manager):
         return res
 
 class CrashCount(models.Model):
-    version = models.ForeignKey(submit_models.Version)
+    version = models.ForeignKey(submit_models.Version, on_delete=models.CASCADE)
     date = models.DateField()
     count = models.IntegerField(default = 0)
 
@@ -127,7 +127,7 @@ class ProcessedCrashManager(models.Manager):
                 data[signature].lin = count
             elif entry['os_name'] == 'windows':
                 data[signature].win = count
-        values = data.values()
+        values = list(data.values())
         sorted_values = sorted(values, key=CrashByVersionData.getKey)
 
         num_entries = len(values)
@@ -168,8 +168,7 @@ class ProcessedCrash(models.Model):
 
     process_time = models.DateTimeField(auto_now_add=True)
 
-    version = models.ForeignKey(Version,
-            null=True)
+    version = models.ForeignKey(Version, on_delete=models.CASCADE, null=True)
 
     # Look for better solution to store dictionary
     additional_data = models.TextField(default='{}')
@@ -245,7 +244,7 @@ class ProcessedCrash(models.Model):
     def _find_frame(self, json_frame_list):
         for frame in json_frame_list:
             function = frame['lib_name']
-            if function not in module_blacklist and function is not "":
+            if function not in module_blacklist and function != "":
                 return frame
 
         return json_frame_list[0]
@@ -261,7 +260,7 @@ class ProcessedCrash(models.Model):
             else:
                 text = frame['lib_name']
 
-        if len(text) is 0:
+        if len(text) == 0:
             text = "Invalid signature"
             logger.warn("could not create a valid signature for %s" % self.crash_id)
 
@@ -286,7 +285,7 @@ class ProcessedCrash(models.Model):
 
     def set_thread_to_model(self, threads):
         other_threads = {}
-        for thread_id, frame_list in threads.iteritems():
+        for thread_id, frame_list in list(threads.items()):
             if int(thread_id) == int(self.crash_thread):
                 self._set_signature(frame_list)
                 self.crashing_thread = frame_list

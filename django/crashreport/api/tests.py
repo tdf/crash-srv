@@ -26,7 +26,7 @@ class ApiCrashCountTest(TestCase):
                 os_name = 'Linux', signature = self.signature, upload_time = timezone.now())
         c = Client()
         response = c.get('/api/get/crash-count')
-        print(response.content)
+        print((response.content))
 
 class ApiChartDataTest(TestCase):
 
@@ -62,4 +62,4 @@ class ApiChartDataTest(TestCase):
         for i in self.valid_days:
             response = c.post('/api/get/chart-data/{}'.format(i))
             self.assertEqual(response.status_code, 405)
-            print(response.content)
+            print((response.content))

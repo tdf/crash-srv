@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^management/', include('management.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^accounts/login/$', auth_views.login, name='login'),
+    url(r'^accounts/login/$', auth_views.LoginView, name='login'),
     url(r'^debug/', include(debug_toolbar.urls)),
 ]
 

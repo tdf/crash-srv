@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 Mozilla
 #
@@ -39,8 +39,8 @@ import ctypes
 import logging
 from collections import defaultdict
 from tempfile import mkdtemp
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import zipfile
 import requests
 
@@ -60,7 +60,7 @@ def fetch_symbol(debug_id, debug_file):
     '''
     Attempt to fetch a PDB file from Microsoft's symbol server.
     '''
-    url = urlparse.urljoin(MICROSOFT_SYMBOL_SERVER,
+    url = urllib.parse.urljoin(MICROSOFT_SYMBOL_SERVER,
                            os.path.join(debug_file,
                                         debug_id,
                                         debug_file))
@@ -156,7 +156,7 @@ def server_has_file(filename):
 def write_skiplist(skiplist):
     try:
         with open(os.path.join(thisdir, 'skiplist.txt'), 'w') as sf:
-            for (debug_id, debug_file) in skiplist.iteritems():
+            for (debug_id, debug_file) in list(skiplist.items()):
                 sf.write('%s %s\n' % (debug_id, debug_file))
     except IOError:
         log.exception('Error writing skiplist.txt')
@@ -286,7 +286,7 @@ def main():
     temp_path = mkdtemp(prefix='symtmp')
 
     log.debug("Fetching symbols (%d pdb files)" % len(modules))
-    total = sum(len(ids) for ids in modules.values())
+    total = sum(len(ids) for ids in list(modules.values()))
     current = 0
     blacklist_count = 0
     skiplist_count = 0
@@ -296,7 +296,7 @@ def main():
     file_index = []
     # Now try to fetch all the unknown modules from the symbol server
     print(modules)
-    for filename, ids in modules.iteritems():
+    for filename, ids in list(modules.items()):
         if filename.lower() in blacklist:
             # This is one of our our debug files from Firefox/Thunderbird/etc
             current += len(ids)

@@ -42,20 +42,20 @@ class MinidumpProcessor(object):
         frames = []
         thread_pattern = re.compile(r'^(?P<thread_id>\d+)\|')
         for line in output.splitlines():
-            if line.startswith('OS'):
-                os_version.append(line)
-            elif line.startswith('CPU'):
-                cpu.append(line)
-            elif line.startswith('GPU'):
+            if line.startswith(b'OS'):
+                os_version.append(line.decode('utf-8'))
+            elif line.startswith(b'CPU'):
+                cpu.append(line.decode('utf-8'))
+            elif line.startswith(b'GPU'):
                 pass
-            elif line.startswith('Crash'):
-                crash.append(line)
-            elif line.startswith('Module'):
+            elif line.startswith(b'Crash'):
+                crash.append(line.decode('utf-8'))
+            elif line.startswith(b'Module'):
                 modules.append(line.decode('utf-8'))
-            elif line is '':
+            elif line == '':
                 continue
             else:
-                frames.append(line)
+                frames.append(line.decode('utf-8'))
 
         self.processed_crash = ProcessedCrash()
 
@@ -88,12 +88,13 @@ class MinidumpProcessor(object):
     def _parse_frames(self, frames):
         threads = {}
         for frame in frames:
+            if frame == '': continue
             parsed_line = frame.split('|')
             thread_id = parsed_line[0]
             frame_id = parsed_line[1]
             lib_name = parsed_line[2]
             function_name = parsed_line[3]
-            file_name = parsed_line[4]
+            file_name = parsed_line[4].strip()
             if file_name.startswith("/home/buildslave/source/libo-core/"):
                 file_name = file_name.replace("/home/buildslave/source/libo-core/", "")
             line_number = parsed_line[5]
@@ -113,7 +114,7 @@ class MinidumpProcessor(object):
         thread_list = {}
         threads = self._parse_frames(frames)
 
-        for thread_id, thread in threads.iteritems():
+        for thread_id, thread in list(threads.items()):
             thread_list[thread_id] = json.dumps(thread)
 
         self.processed_crash.set_thread_to_model(thread_list)

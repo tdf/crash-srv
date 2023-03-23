@@ -20,8 +20,8 @@ def update_bug_stats(session, bug_id, fixed):
     data = {'fixed': fixed, 'bug_nr': bug_id}
     r = session.post(url, data = data)
     if r.status_code != 200:
-        print(r.content)
-        print("Error while setting tdf#%d to %s" % (bug_id, fixed))
+        print((r.content))
+        print(("Error while setting tdf#%d to %s" % (bug_id, fixed)))
 
 def is_bug_report_fixed(bug):
     return not bug.is_open

@@ -25,7 +25,7 @@ def main():
     url = base_address + sys.argv[2]
     r = session.post(url)
     if r.status_code != 200:
-        print("error calling %s" % url)
+        print(("error calling %s" % url))
 
 if __name__ == "__main__":
     main()

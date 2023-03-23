@@ -20,7 +20,7 @@ def set_bug_to_report(session, signature, bug):
     data = {'signature': signature, 'bug_nr': bug}
     r = session.post(url, data = data)
     if r.status_code != 200:
-        print("Error while setting tdf#%d to %s" % (bug, signature))
+        print(("Error while setting tdf#%d to %s" % (bug, signature)))
 
 def main():
 
@@ -44,9 +44,9 @@ def main():
     password = config["CrashReport"]["Password"]
     session = requests.session()
     t = session.get(login_url)
-    print(t.content)
+    print((t.content))
     print(session)
-    print(session.cookies.values())
+    print((list(session.cookies.values())))
     csrftoken = session.cookies['csrftoken']
 
     login_data = { 'username': user,'password': password,
